@@ -111,7 +111,7 @@ import { setupSyncPlayback } from "@/components/syncPlayback";
 const props = defineProps({
   videoId: { type: String, required: true }
 });
-const emit = defineEmits(["ended"]);
+const emit = defineEmits(["ended", "play-autoplay-candidate"]);
 function reloadStream() {
   fetchStreamUrl(props.videoId);
 }
@@ -127,7 +127,19 @@ const videoRef = ref(null);
 const audioRef = ref(null);
 const repeatEnabled = ref(false);
 // デフォルトはオフにする
-const autoplayEnabled = ref(false);
+const AUTOPLAY_SETTING_KEY = 'yt_autoplay_enabled_v1';
+function loadAutoplaySetting() {
+  try {
+    const v = localStorage.getItem(AUTOPLAY_SETTING_KEY);
+    if (v === null) return false; // default off
+    return v === '1' ? true : false;
+  } catch (e) { return false; }
+}
+function saveAutoplaySetting(val) {
+  try { localStorage.setItem(AUTOPLAY_SETTING_KEY, val ? '1' : '0'); } catch (e) {}
+}
+
+const autoplayEnabled = ref(loadAutoplaySetting());
 const loading = ref(false);
 const isQualitySwitching = ref(false);
 const showUnmutePrompt = ref(false);
@@ -498,14 +510,18 @@ watch(repeatEnabled, (newVal) => {
       autoplayEnabled.value = false;
       try { cancelAutoplay(); } catch (e) {}
     } else {
-      // if repeat turned off, re-enable autoplay by default
-      autoplayEnabled.value = true;
+      // if repeat turned off, leave autoplay as user-configured; do not force change
       // if sources ready, schedule autoplay
       try {
         if (autoplayEnabled.value) scheduleAutoplay();
       } catch (e) {}
     }
   } catch (e) {}
+});
+
+// persist autoplay setting across videos
+watch(autoplayEnabled, (val) => {
+  try { saveAutoplaySetting(!!val); } catch (e) {}
 });
 
 function clearType2SrcRepeated() {
