@@ -47,7 +47,7 @@
 
       <button type="submit" class="search-button" aria-label="検索">
         <img
-          :src="searchiconIcon"
+          :src="isDarkMode ? searchIconBlack : searchiconIcon"
           alt="🔍"
           style="width: 20px; height: 20px"
         />
@@ -100,6 +100,7 @@
 import settingIcon from '/Image/setting-icon.txt?raw'
 import settingIconBlack from '/Image/setting-icon-black.txt?raw'
 import searchiconIcon from '/Image/search-icon.txt?raw'
+import searchIconBlack from '/Image/search-icon-black.txt?raw'
 import SettingsModal from "./SettingsModal.vue";
 
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
@@ -296,6 +297,7 @@ const removeEndpoint = (index) => {
  * ダークモード切り替え
  */
 const onToggleDarkMode = (value) => {
+  isDarkMode.value = value;
   saveDarkMode(value);
   emit('toggle-dark-mode', value);
 };
@@ -312,6 +314,11 @@ watch(mode, (v) => {
     rmSaveMode(v);
   } catch (e) {}
 });
+
+// ダークモード状態の監視
+watch(isDarkMode, (newValue) => {
+  // DOM更新トリガー用
+}, { deep: true });
 </script>
 
 <style scoped>

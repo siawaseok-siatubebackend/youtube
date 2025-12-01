@@ -106,7 +106,7 @@ export default {
 }
 
 .error { 
-  color: #ff6666; 
+  color: var(--accent-weak); 
   padding: 1rem; 
   text-align: center; 
 }
@@ -114,8 +114,8 @@ export default {
 .retry-btn {
   margin-left: 1rem;
   padding: 0.3rem 0.8rem;
-  background-color: #ff0033;
-  color: #fff;
+  background-color: var(--accent-color);
+  color: var(--on-accent);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -125,10 +125,12 @@ export default {
 .retry-btn:disabled {
   background-color: var(--border-color);
   cursor: not-allowed;
+  color: var(--text-secondary);
 }
 
 .retry-btn:hover:not(:disabled) { 
-  background-color: #cc0028; 
+  background-color: var(--accent-dark);
+  color: var(--on-accent);
 }
 
 .no-results { 

@@ -32,7 +32,7 @@
         表示回数
         <img src="https://count.getloli.com/@:siatube?name=%3Asiatube&theme=minecraft&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto" style="width: 50%; max-width: 380px;">
       </div>
-      <div style="color: #666;">バージョン1.4.3</div>
+      <div style="color: var(--text-secondary);">バージョン1.4.3</div>
     </footer>
   </div>
 </template>
@@ -120,11 +120,11 @@ export default {
   background-color: var(--hover-bg);
 }
 .category-nav button.active {
-  background-color: #ff0033;
-  color: white;
+  background-color: var(--accent-color);
+  color: var(--on-accent);
 }
 .error {
-  color: #ff6666;
+  color: var(--accent-weak);
   padding: 1rem;
 }
 .loading {
@@ -149,9 +149,10 @@ main {
 }
 
 .footer a {
-  color: #ff0033;
+  color: var(--accent-color);
   text-decoration: none;
   margin: 0 0.5rem;
+  transition: color 0.2s ease;
 }
 
 .footer a:hover {

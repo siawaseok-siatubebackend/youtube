@@ -82,6 +82,13 @@
 </template>
 
 <script>
+import {
+  formatDuration,
+  formatPublishedAt,
+  formatViewCount,
+  getPrimaryThumbnail
+} from "../utils/formatters";
+
 export default {
   props: {
     videos: {
@@ -94,86 +101,18 @@ export default {
     },
   },
   methods: {
-    formatDuration(input) {
-      if (!input) return "";
-
-      const isoMatch = input.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-      const pad = (n) => n.toString().padStart(2, "0");
-      if (isoMatch) {
-        const [h, m, s] = isoMatch.slice(1).map((v) => parseInt(v || "0"));
-        const totalSeconds = h * 3600 + m * 60 + s;
-        const hh = Math.floor(totalSeconds / 3600);
-        const mm = Math.floor((totalSeconds % 3600) / 60);
-        const ss = totalSeconds % 60;
-        return hh ? `${hh}:${pad(mm)}:${pad(ss)}` : `${mm}:${pad(ss)}`;
-      }
-
-      const timeParts = input.split(":");
-      if (
-        timeParts.length === 2 &&
-        timeParts.every((part) => /^\d+$/.test(part))
-      ) {
-        const [mm, ss] = timeParts;
-        return `${parseInt(mm)}:${pad(parseInt(ss))}`;
-      } else if (
-        timeParts.length === 3 &&
-        timeParts.every((part) => /^\d+$/.test(part))
-      ) {
-        const [hh, mm, ss] = timeParts;
-        return `${parseInt(hh)}:${pad(parseInt(mm))}:${pad(parseInt(ss))}`;
-      }
-      return "";
-    },
-
-    formatPublishedAt(input) {
-      if (!input) return "不明";
-      const isoDate = new Date(input);
-      if (!isNaN(isoDate.getTime())) {
-        const now = new Date();
-        const diffMs = now - isoDate;
-        const minutes = Math.floor(diffMs / (1000 * 60));
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-
-        if (minutes < 1) return "たった今";
-        if (minutes < 60) return `${minutes}分前`;
-        if (hours < 24) return `${hours}時間前`;
-        if (days === 1) return "1日前";
-        return `${days}日前`;
-      }
-      if (
-        /^\d+日前$/.test(input) ||
-        /^\d+時間前$/.test(input) ||
-        /^\d+分前$/.test(input) ||
-        input === "たった今"
-      ) {
-        return input;
-      }
-      return input;
-    },
-
-    getPrimaryThumbnail(id) {
-      return `https://i.ytimg.com/vi/${id}/sddefault.jpg`;
-    },
-
+    formatDuration,
+    formatPublishedAt,
+    formatViewCount,
+    getPrimaryThumbnail,
     onImageError(event, id) {
       if (!event.target.dataset.error) {
-        event.target.src = `https://i.ytimg.com/vi/${id}/sddefault.jpg`;
+        event.target.src = getPrimaryThumbnail(id);
         event.target.dataset.error = true;
       }
     },
-
     onChannelIconError(event) {
       event.target.style.display = "none";
-    },
-
-    formatViewCount(num) {
-      if (!num) return "0";
-      if (num < 10000) return num.toLocaleString();
-      if (num < 100000000) {
-        return (num / 10000).toFixed(1).replace(/\.0$/, "") + "万";
-      }
-      return (num / 100000000).toFixed(1).replace(/\.0$/, "") + "億";
     },
   },
 };
@@ -296,7 +235,7 @@ body {
 
 .info h3 a:hover,
 .channel-info a:hover {
-  color: #ff0033;
+  color: var(--link-hover);
   text-decoration: underline;
 }
 
@@ -328,5 +267,12 @@ body {
   color: var(--text-primary);
   margin-top: 0.4rem;
 }
+.channel-link .channel-info {
+  text-decoration: none;
+}
 
+.channel-link:hover .channel-info {
+  text-decoration: underline;
+  color: var(--link-hover);
+}
 </style>

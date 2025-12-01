@@ -236,16 +236,18 @@ export default {
 .read-more-btn {
   background: none;
   border: none;
-  color: #ff0033;
+  color: var(--accent-color);
   cursor: pointer;
   font-size: 0.9em;
   margin-top: 4px;
   padding: 0;
   user-select: none;
+  transition: color 0.2s ease;
 }
 
 .read-more-btn:hover {
   text-decoration: underline;
+  color: var(--accent-dark);
 }
 
 .comment-meta {
@@ -267,7 +269,7 @@ export default {
 }
 
 .error-msg {
-  color: #ff6666;
+  color: var(--accent-weak);
   margin-top: 12px;
 }
 </style>

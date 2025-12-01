@@ -984,7 +984,7 @@ watch(videoRef, (newEl, oldEl) => {
   transition: opacity 0.3s ease;
 }
 .selector {
-  background: #222;
+  background: var(--ui-dark);
   color: var(--on-accent);
   border: 1px solid var(--border-color);
   padding: 4px 8px;

@@ -98,7 +98,7 @@
           <h2 class="playlist-title">
             <span v-if="!loadingChannel">{{ playlist.title }}</span>
             <span v-else class="skeleton skeleton-text" style="width: 40%; height: 1.2em;"></span>
-            <router-link v-if="playlist.playlistId && !loadingChannel" :to="`/playlist?list=${playlist.playlistId}`" class="playlist-video-link-to">▶ 全てを再生<span style="font-size: small; color: #989898;">(プレイリスト再生モード)</span></router-link>
+            <router-link v-if="playlist.playlistId && !loadingChannel" :to="`/playlist?list=${playlist.playlistId}`" class="playlist-video-link-to">▶ 全てを再生<span style="font-size: small; color: var(--text-secondary);">(プレイリスト再生モード)</span></router-link>
             <span v-else-if="loadingChannel" class="skeleton skeleton-text" style="width: 80px; height: 1em; margin-left: 10px;"></span>
           </h2>
           <div class="playlist-items-scroll">
@@ -168,7 +168,7 @@
     <div class="skeleton skeleton-text" style="width: 60%; height: 2.1em; margin: 0 auto 16px auto;"></div>
     <div class="skeleton skeleton-text" style="width: 30%; height: 1.2em; margin: 0 auto 16px auto;"></div>
     <div class="skeleton skeleton-text" style="width: 90%; height: 2em; margin: 0 auto 16px auto;"></div>
-    <p style="color: #c00; margin: 24px 0;">チャンネル情報の取得に失敗しました。</p>
+    <p style="color: var(--accent-weak); margin: 24px 0;">チャンネル情報の取得に失敗しました。</p>
     <button class="reload-btn" @click="reloadChannel">再取得</button>
   </section>
   <div v-if="tab === 'home'" class="page-end">
@@ -396,8 +396,8 @@ watch(
   right: 6px;
   padding: 2px 6px;
   font-size: 0.8rem;
-  color: #fff;
-  background-color: rgba(50, 50, 50, 0.7);
+  color: var(--on-accent);
+  background-color: rgba(0, 0, 0, 0.7);
   border-radius: 3px;
   user-select: none;
 }
@@ -458,7 +458,7 @@ watch(
   height: 96px;
   border-radius: 50%;
   object-fit: cover;
-  background-color: #eee;
+  background-color: var(--bg-secondary);
 }
 
 .info {
@@ -473,12 +473,12 @@ watch(
 
 .video-count {
   margin: 0 0 8px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .description {
   margin: 0;
-  color: #444;
+  color: var(--text-primary);
   white-space: pre-wrap;
 }
 
@@ -490,14 +490,16 @@ watch(
   border-radius: 0;
   border: none;
   border-radius: 6px;
-  background: #ffffff;
+  background: var(--bg-primary);
   cursor: pointer;
   font-size: 1.3rem;
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .tabs .active {
-  border-bottom: 2px solid rgb(0, 0, 0);
-  color: rgb(0, 0, 0);
+  border-bottom: 2px solid var(--text-primary);
+  color: var(--text-primary);
 }
 
 .tab-content {
@@ -536,7 +538,7 @@ watch(
   height: 100%;
   border-radius: 8px;
   object-fit: cover;
-  background-color: #ccc;
+  background-color: var(--bg-secondary);
 }
 
 .top-video .duration {
@@ -545,8 +547,8 @@ watch(
   right: 6px;
   padding: 2px 6px;
   font-size: 0.8rem;
-  color: #fff;
-  background-color: rgba(50, 50, 50, 0.7);
+  color: var(--on-accent);
+  background-color: rgba(0, 0, 0, 0.7);
   border-radius: 3px;
   user-select: none;
 }
@@ -569,7 +571,7 @@ watch(
   display: -webkit-box;
   -webkit-box-orient: vertical;
   max-height: 120px;
-  color: #444;
+  color: var(--text-secondary);
   margin-top: 8px;
 }
 
@@ -596,7 +598,7 @@ watch(
 }
 
 .video-item {
-  background: #fafafa;
+  background: var(--bg-primary);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 0 6px rgb(0 0 0 / 0.1);
@@ -611,7 +613,7 @@ watch(
 .loading {
   padding: 20px;
   text-align: center;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .skeleton {
@@ -619,9 +621,9 @@ watch(
   height: 100%;
   background: linear-gradient(
     100deg,
-    #e0e0e0 30%,
-    #f5f5f5 50%,
-    #e0e0e0 70%
+    var(--bg-secondary) 30%,
+    var(--hover-bg) 50%,
+    var(--bg-secondary) 70%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
@@ -629,7 +631,7 @@ watch(
 }
 
 .skeleton-text {
-  background: #e0e0e0;
+  background: var(--border-color);
   border-radius: 6px;
   animation: shimmer 1.5s infinite linear;
 }
@@ -669,17 +671,18 @@ watch(
 
 .reload-btn {
   padding: 10px 24px;
-  background: #444;
-  color: #fff;
-  border: none;
+  background: var(--text-secondary);
+  color: var(--on-accent);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 1.1em;
   cursor: pointer;
   margin-top: 12px;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 .reload-btn:hover {
-  background: #666;
+  background: var(--text-secondary-hover);
+  color: var(--on-accent);
 }
 .error-section {
   text-align: center;

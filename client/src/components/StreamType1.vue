@@ -130,15 +130,15 @@ watch(
   height: 100%;
 }
 .error-box {
-  color: red;
+  color: var(--accent-weak);
   margin: 10px;
 }
 .reload-button {
   margin-top: 6px;
   padding: 6px 12px;
   font-size: 9px;
-  background: #444;
-  color: white;
+  background: var(--text-secondary);
+  color: var(--on-accent);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -146,6 +146,7 @@ watch(
   width: 50%;
 }
 .reload-button:hover {
-  background: #666;
+  background: var(--text-secondary-hover);
+  color: var(--on-accent);
 }
 </style>

@@ -1,5 +1,5 @@
 /**
- * ヘッダー検索設定の管理ロジック
+ * ヘッダー検索設定の管理ロジック（リファクタリング版）
  */
 
 const STORAGE_KEYS = {
@@ -9,15 +9,59 @@ const STORAGE_KEYS = {
   DARK_MODE: 'darkMode',
 };
 
+const DEFAULTS = {
+  DEFAULT_PLAYBACK_MODE: '1',
+  SHORT_VIDEO_MINUTES: 4,
+};
+
+function safeSetItem(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error(`safeSetItem error [${key}]`, e);
+  }
+}
+
+function safeGetItem(key, fallback = null) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return fallback;
+    try {
+      return JSON.parse(raw);
+    } catch (_) {
+      // 既存ストレージが生の文字列の場合はそのまま返す
+      return raw;
+    }
+  } catch (e) {
+    console.error(`safeGetItem error [${key}]`, e);
+    return fallback;
+  }
+}
+
+function setCookie(name, value, days = 3650) {
+  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function getCookie(name) {
+  try {
+    const pair = document.cookie.split('; ').find((p) => p.startsWith(`${name}=`));
+    if (!pair) return null;
+    return decodeURIComponent(pair.split('=')[1] || '');
+  } catch (e) {
+    console.error(`getCookie error [${name}]`, e);
+    return null;
+  }
+}
+
 /**
  * デフォルト再生方式を保存
+ * @param {string} mode
  */
 export function saveDefaultPlayback(mode) {
   try {
-    const seconds = 60 * 60 * 24 * 365 * 10;
-    const expires = new Date(Date.now() + seconds * 1000).toUTCString();
-    document.cookie = `StreamType=${encodeURIComponent(mode)}; expires=${expires}; path=/`;
-    localStorage.setItem(STORAGE_KEYS.DEFAULT_PLAYBACK, mode);
+    setCookie('StreamType', mode, 3650); // ほぼ永久
+    safeSetItem(STORAGE_KEYS.DEFAULT_PLAYBACK, String(mode));
   } catch (e) {
     console.error('saveDefaultPlayback error', e);
   }
@@ -25,37 +69,40 @@ export function saveDefaultPlayback(mode) {
 
 /**
  * デフォルト再生方式を読み込み
+ * @returns {string}
  */
 export function loadDefaultPlayback() {
   try {
-    const fromStorage = localStorage.getItem(STORAGE_KEYS.DEFAULT_PLAYBACK);
-    if (fromStorage) return fromStorage;
+    const fromStorage = safeGetItem(STORAGE_KEYS.DEFAULT_PLAYBACK, null);
+    if (fromStorage !== null && fromStorage !== undefined && fromStorage !== '') return String(fromStorage);
 
-    const m = (document.cookie.match(new RegExp('(^| )StreamType=([^;]+)')) || [])[2];
-    if (m) {
-      const mode = decodeURIComponent(m);
-      localStorage.setItem(STORAGE_KEYS.DEFAULT_PLAYBACK, mode);
-      return mode;
+    const cookieMode = getCookie('StreamType');
+    if (cookieMode) {
+      safeSetItem(STORAGE_KEYS.DEFAULT_PLAYBACK, String(cookieMode));
+      return cookieMode;
     }
 
-    return '1';
+    return DEFAULTS.DEFAULT_PLAYBACK_MODE;
   } catch (e) {
     console.error('loadDefaultPlayback error', e);
-    return '1';
+    return DEFAULTS.DEFAULT_PLAYBACK_MODE;
   }
 }
 
 /**
  * 短動画フィルタ設定を保存
+ * @param {boolean} enabled
+ * @param {number} minutes
  */
 export function saveShortVideoFilter(enabled, minutes) {
   try {
-    localStorage.setItem(STORAGE_KEYS.SHORT_VIDEO_FILTER_ENABLED, JSON.stringify(enabled));
-    localStorage.setItem(STORAGE_KEYS.SHORT_VIDEO_FILTER_MINUTES, JSON.stringify(minutes));
+    safeSetItem(STORAGE_KEYS.SHORT_VIDEO_FILTER_ENABLED, !!enabled);
+    safeSetItem(STORAGE_KEYS.SHORT_VIDEO_FILTER_MINUTES, Number(minutes));
+
     window.__autoplayDurationFilter = {
-      enabled,
-      minutes,
-      maxSeconds: minutes * 60,
+      enabled: !!enabled,
+      minutes: Number(minutes),
+      maxSeconds: Number(minutes) * 60,
     };
     console.log('[settings] saveShortVideoFilter:', window.__autoplayDurationFilter);
   } catch (e) {
@@ -65,15 +112,16 @@ export function saveShortVideoFilter(enabled, minutes) {
 
 /**
  * 短動画フィルタ設定を読み込み
+ * @returns {{enabled: boolean, minutes: number}}
  */
 export function loadShortVideoFilter() {
   try {
-    const enabled = localStorage.getItem(STORAGE_KEYS.SHORT_VIDEO_FILTER_ENABLED);
-    const minutes = localStorage.getItem(STORAGE_KEYS.SHORT_VIDEO_FILTER_MINUTES);
+    const enabled = safeGetItem(STORAGE_KEYS.SHORT_VIDEO_FILTER_ENABLED, null);
+    const minutes = safeGetItem(STORAGE_KEYS.SHORT_VIDEO_FILTER_MINUTES, null);
 
     const result = {
-      enabled: enabled !== null ? JSON.parse(enabled) : false,
-      minutes: minutes !== null ? JSON.parse(minutes) : 4,
+      enabled: enabled !== null ? Boolean(enabled) : false,
+      minutes: minutes !== null ? Number(minutes) : DEFAULTS.SHORT_VIDEO_MINUTES,
     };
 
     window.__autoplayDurationFilter = {
@@ -86,16 +134,17 @@ export function loadShortVideoFilter() {
     return result;
   } catch (e) {
     console.error('loadShortVideoFilter error', e);
-    return { enabled: false, minutes: 4 };
+    return { enabled: false, minutes: DEFAULTS.SHORT_VIDEO_MINUTES };
   }
 }
 
 /**
  * ダークモード設定を保存
+ * @param {boolean} isDark
  */
 export function saveDarkMode(isDark) {
   try {
-    localStorage.setItem(STORAGE_KEYS.DARK_MODE, isDark);
+    safeSetItem(STORAGE_KEYS.DARK_MODE, !!isDark);
   } catch (e) {
     console.error('saveDarkMode error', e);
   }
@@ -103,11 +152,12 @@ export function saveDarkMode(isDark) {
 
 /**
  * ダークモード設定を読み込み
+ * @returns {boolean}
  */
 export function loadDarkMode() {
   try {
-    const stored = localStorage.getItem(STORAGE_KEYS.DARK_MODE);
-    return stored === 'true';
+    const stored = safeGetItem(STORAGE_KEYS.DARK_MODE, null);
+    return stored !== null ? Boolean(stored) : false;
   } catch (e) {
     console.error('loadDarkMode error', e);
     return false;
@@ -116,12 +166,24 @@ export function loadDarkMode() {
 
 /**
  * URLが有効か検証
+ * @param {string} url
+ * @returns {boolean}
  */
 export function isValidUrl(url) {
   try {
     const u = new URL(url);
     return u.protocol === 'http:' || u.protocol === 'https:';
-  } catch {
+  } catch (e) {
     return false;
   }
 }
+
+export default {
+  saveDefaultPlayback,
+  loadDefaultPlayback,
+  saveShortVideoFilter,
+  loadShortVideoFilter,
+  saveDarkMode,
+  loadDarkMode,
+  isValidUrl,
+};

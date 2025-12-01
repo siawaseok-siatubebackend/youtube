@@ -34,7 +34,7 @@
               <strong>音声のみ:</strong>
               <div v-for="item in audioOnlyList" :key="item.url">
                 {{ item.ext }}:
-                <a :href="item.url" target="_blank" rel="noopener" download>ダウンロード</a>
+                <a :href="item.url" target="_blank" rel="noopener"  download>ダウンロード</a>
               </div>
             </div>
 
@@ -252,7 +252,7 @@ async function copyUrl(url) {
   background: none;
   font-size: 28px;
   cursor: pointer;
-  color: var(--close-btn-color);
+  color: var(--text-primary);
 }
 
 .option {
@@ -260,22 +260,24 @@ async function copyUrl(url) {
 }
 
 .error {
-  color: red;
+  color: var(--accent-weak);
   margin-top: 10px;
 }
 
 .retry-btn {
   margin-top: 8px;
   padding: 6px 12px;
-  background: var(--text-primary);
+  background: var(--text-secondary);
   color: var(--on-accent);
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 12px;
+  transition: background-color 0.2s ease;
 }
 .retry-btn:hover {
-  background: var(--text-secondary);
+  background: var(--text-secondary-hover);
+  color: var(--on-accent);
 }
 
 /* m3u8 表示のスタイル */

@@ -153,7 +153,8 @@ function onImageError(event, id) {
 
 <style scoped>
 .playlist-item.active {
-  background-color: rgba(221, 235, 231, 0.95);
+  background-color: var(--hover-bg);
+  transition: background-color 0.2s ease;
 }
 
 .playlist-section {
@@ -246,7 +247,7 @@ function onImageError(event, id) {
   bottom: 4px;
   right: 4px;
   font-size: 0.75rem;
-  color: #fff;
+  color: var(--on-accent);
   background-color: rgba(0, 0, 0, 0.7);
   padding: 2px 5px;
   border-radius: 4px;
@@ -300,7 +301,7 @@ function onImageError(event, id) {
 }
 
 .error-message {
-  color: #ff6666;
+  color: var(--accent-weak);
   padding: 1rem;
   text-align: center;
 }

@@ -16,8 +16,12 @@ export default {
       if (!keyword || !keyword.trim()) return;
       this.$router?.push({ path: '/search', query: { q: keyword.trim() } });
     },
-    toggleDarkMode() {
-      const isDarkMode = document.documentElement.classList.toggle('dark-mode');
+    toggleDarkMode(isDarkMode) {
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark-mode');
+      } else {
+        document.documentElement.classList.remove('dark-mode');
+      }
       localStorage.setItem('darkMode', isDarkMode);
     }
   },

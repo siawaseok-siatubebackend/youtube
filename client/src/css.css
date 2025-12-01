@@ -5,6 +5,23 @@
   --text-secondary: #666666;
   --border-color: #cccccc;
   --hover-bg: #f0f0f0;
+  --accent-color: #0084ff;
+  --accent-weak: #ff6666;
+  --accent-dark: #cc0028;
+  --on-accent: #ffffff;
+  --danger: #c00;
+  --danger-weak: #f66;
+  --danger-text: #ffffff;
+  --success: #2a8a2a;
+  --ui-dark: #222;
+  --ui-darker: #333;
+  --ui-darker2: #444;
+  --text-type2-reload: #555555;
+  --text-secondary-hover: #999999;
+  --link-hover: #212121;
+  --link-color: #0008ff;
+  --video-meta-bg: rgba(0, 0, 0, 0.05);
+  --description-bg: rgba(0, 0, 0, 0.02);
 }
 
 html.dark-mode {
@@ -14,7 +31,25 @@ html.dark-mode {
   --text-secondary: #b0b0b0;
   --border-color: #444444;
   --hover-bg: #333333;
+  --accent-color: #ff0033;
+  --accent-weak: #ff6666;
+  --accent-dark: #cc0028;
+  --on-accent: #ffffff;
+  --danger: #c00;
+  --danger-weak: #f66;
+  --danger-text: #ffffff;
+  --success: #2a8a2a;
+  --ui-dark: #222;
+  --ui-darker: #333;
+  --ui-darker2: #444;
+  --text-type2-reload: #444444;
+  --text-secondary-hover: #666666;
+  --link-hover: #ff0033;
+  --link-color: #ff0033;
+  --video-meta-bg: rgba(255, 255, 255, 0.05);
+  --description-bg: rgba(255, 255, 255, 0.02);
 }
+
 
 body {
   font-family: "ヒラギノ角ゴ ProN", "Hiragino Kaku Gothic ProN",
