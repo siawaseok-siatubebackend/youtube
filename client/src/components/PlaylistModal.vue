@@ -9,8 +9,8 @@
           <li v-for="pl in playlists" :key="pl.id">
             <button class="pl-item" @click="addToPlaylist(pl.id)">
               <img v-if="pl.thumbnail" :src="pl.thumbnail" class="pl-thumb" />
-              <span class="pl-name">{{ pl.name }}</span>
-              <span class="pl-count">({{ pl.items?.length || 0 }})</span>
+              <span style="color: var(--normal-text);" class="pl-name">{{ pl.name }}</span>
+              <span style="color: var(--normal-text);" class="pl-count">({{ pl.items?.length || 0 }})</span>
             </button>
           </li>
         </ul>

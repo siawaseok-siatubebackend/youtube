@@ -79,7 +79,6 @@
 import { ref, onMounted, nextTick, computed } from "vue";
 import { useRoute } from "vue-router";
 import { apiRequest } from "@/services/requestManager";
-import { getPlaylistById } from "@/utils/playlistManager";
 
 const props = defineProps({
   playlistId: String,
@@ -113,39 +112,15 @@ onMounted(async () => {
   error.value = false;
 
   try {
-    const isCustomPlaylist = /^\d+$/.test(playlistId.value);
+    const isCustomPlaylist = playlistId.value.startsWith('local-');
     let data;
 
-    if (isCustomPlaylist) {
-      const customPl = await getPlaylistById(parseInt(playlistId.value, 10));
-      if (!customPl) throw new Error("プレイリストが見つかりません");
-      
-      data = {
-        title: customPl.name,
-        playlistId: customPl.id,
-        totalItems: customPl.items.length,
-        items: customPl.items.map((item) => ({
-          videoId: item.id,
-          title: item.title,
-          author: item.authorName,
-          thumbnail: item.thumbnailBinary 
-            ? arrayBufferToBase64(item.thumbnailBinary)
-            : null,
-          duration: null,
-          // ▼ 追加: 自作プレイリスト側にデータがある場合に備えてマッピング（なければnull）
-          views: item.views || null,
-          published: item.published || null,
-        })),
-        isCustom: true,
-      };
-    } else {
-      data = await apiRequest({
-        params: { playlist: playlistId.value },
-        retries: 1,
-        timeout: 30000,
-        jsonpFallback: true,
-      });
-    }
+    data = await apiRequest({
+      params: { playlist: playlistId.value },
+      retries: 1,
+      timeout: 30000,
+      jsonpFallback: true,
+    });
 
     playlist.value = data;
 
@@ -182,18 +157,6 @@ function onImageError(event, id) {
   if (!event.target.dataset.error) {
     event.target.src = `https://i.ytimg.com/vi/${id}/sddefault.jpg`;
     event.target.dataset.error = "true";
-  }
-}
-
-function arrayBufferToBase64(arrayBuffer, mimeType = 'image/jpeg') {
-  if (!arrayBuffer) return null;
-  try {
-    const bytes = new Uint8Array(arrayBuffer);
-    let binary = '';
-    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-    return `data:${mimeType};base64,${btoa(binary)}`;
-  } catch (e) {
-    return null;
   }
 }
 </script>

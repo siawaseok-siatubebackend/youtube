@@ -166,6 +166,31 @@ export async function apiRequest(options = {}) {
     signal: outerSignal = null,
   } = options;
 
+  // ローカルプレイリストのチェック
+  if (params.playlist && typeof params.playlist === 'string' && params.playlist.startsWith('local-')) {
+    const { getPlaylistById } = await import("@/utils/playlistManager");
+    const localIdStr = params.playlist.slice(6);
+    if (!/^\d+$/.test(localIdStr)) throw new Error("Invalid local playlist ID");
+    const localId = parseInt(localIdStr, 10);
+    const customPl = await getPlaylistById(localId);
+    if (!customPl) throw new Error("プレイリストが見つかりません");
+    return {
+      title: customPl.name,
+      playlistId: params.playlist,
+      totalItems: customPl.items.length,
+      items: customPl.items.map((item) => ({
+        videoId: item.id,
+        title: item.title,
+        author: item.authorName,
+        thumbnail: item.thumbnailBinary ? arrayBufferToBase64(item.thumbnailBinary) : null,
+        duration: null,
+        views: item.views || null,
+        published: item.published || null,
+      })),
+      isCustom: true,
+    };
+  }
+
   let lastErr = null;
   const base = getEffectiveApiUrl();
   const url = buildUrl(base, params);
@@ -219,6 +244,14 @@ export async function apiRequest(options = {}) {
   }
 
   throw lastErr || new Error("apiRequest failed");
+}
+
+function arrayBufferToBase64(arrayBuffer, mimeType = 'image/jpeg') {
+  if (!arrayBuffer) return null;
+  const bytes = new Uint8Array(arrayBuffer);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return `data:${mimeType};base64,${btoa(binary)}`;
 }
 
 export { STORAGE_KEY as __STORAGE_KEY__ };

@@ -43,7 +43,13 @@ export default {
   },
   methods: {
     rLink(r) {
-      return r.replaylistId && r.replaylistId.length > 20 ? `/watch?v=${r.videoId}&list=${r.replaylistId}` : `/watch?v=${r.videoId}`;
+      if (r.replaylistId && r.replaylistId.length > 20) {
+        return `/watch?v=${r.videoId}&list=${r.replaylistId}`;
+      } else if (this.playlistId) {
+        return `/watch?v=${r.videoId}&list=${this.playlistId}`;
+      } else {
+        return `/watch?v=${r.videoId}`;
+      }
     },
   },
 };

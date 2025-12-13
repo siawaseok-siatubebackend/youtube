@@ -344,8 +344,11 @@ export default {
                   : null;
               if (next && next.videoId) {
                 const query = { v: next.videoId, autoplay: "1" };
-                if (next.replaylistId && next.replaylistId.length > 20)
+                if (next.replaylistId && next.replaylistId.length > 20) {
                   query.list = next.replaylistId;
+                } else if (playlistId.value) {
+                  query.list = playlistId.value;
+                }
                 this.$router.push({ path: "/watch", query });
               }
             }, 3000);
