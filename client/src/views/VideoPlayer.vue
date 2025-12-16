@@ -195,24 +195,37 @@ export default {
       return this.video?.description?.run3 || "";
     },
     relatedVideos() {
-      const feed = this.video?.related || [];
+      const feed = this.video?.["Related-videos"]?.relatedVideos || [];
       const mapped = feed.map((item) => {
-        // Try to extract duration from badge (e.g., "1:23:45" or "4:30")
-        let duration = item.duration || 0;
-        if (!duration && item.badge) {
-          duration = this.parseDurationFromBadge(item.badge);
+        if (item.type === "playlist") {
+          // Handle playlist items
+          return {
+            base64imge: item.thumbnail || "",
+            badge: "",
+            title: item.title || "",
+            metadataRow1: "再生リスト",
+            metadataRow2Part1: "",
+            metadataRow2Part2: "",
+            videoId: item.videoId || "",
+            replaylistId: item.playlistId || "",
+            duration: 0,
+            verifiedIcon: null,
+          };
+        } else {
+          // Handle video items
+          return {
+            base64imge: item.thumbnail || "",
+            badge: item.badge || "",
+            title: item.title || "",
+            metadataRow1: item.channelName || "",
+            metadataRow2Part1: item.viewCountText || "",
+            metadataRow2Part2: item.publishedTimeText || "",
+            videoId: item.videoId || "",
+            replaylistId: "",
+            duration: item.duration || 0,
+            verifiedIcon: item.verifiedIcon || null,
+          };
         }
-        return {
-          base64imge: item.thumbnail || "",
-          badge: item.badge || "",
-          title: item.title || "",
-          metadataRow1: item.channel,
-          metadataRow2Part1: item.views || "",
-          metadataRow2Part2: item.uploaded || "",
-          videoId: item.videoId || "",
-          replaylistId: item.playlistId || "",
-          duration: duration,
-        };
       });
       
       // Debug: log the first item to see what data we have
@@ -448,7 +461,7 @@ export default {
           console.warn('Failed to save to history:', historyError);
         }
         
-        if (!Array.isArray(data.related) || data.related.length === 0) {
+        if (!data["Related-videos"] || !Array.isArray(data["Related-videos"].relatedVideos) || data["Related-videos"].relatedVideos.length === 0) {
           this.error = "関連動画が見つかりませんでした。";
         }
         return;

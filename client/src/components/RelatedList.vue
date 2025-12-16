@@ -12,17 +12,18 @@
         <router-link v-if="r.videoId" :to="rLink(r)" class="page-link">
           <div class="thumb-wrapper">
             <img :src="r.base64imge" :alt="r.title" class="thumb-img" />
-            <span v-if="r.badge" class="duration-badge" :class="{ 'badge-live': r.badge.toLowerCase().includes('ライブ') }">{{ r.badge }}</span>
+            <span v-if="r.duration" class="duration-badge" :class="{ 'badge-live': r.badge && r.badge.toLowerCase().includes('ライブ') }">{{ r.duration }}</span>
           </div>
         </router-link>
         <router-link v-if="r.videoId" :to="rLink(r)" class="page-link">
           <div class="video-info">
             <span class="video-title-related" :title="r.title">{{ r.title }}</span>
             <div class="video-metadata">
-              <div class="one-line re-actername">{{ r.metadataRow1 }}</div>
+              <div style="display: flex; align-items: center;" class="one-line re-actername">{{ r.metadataRow1 }}<svg v-if="r.verifiedIcon === 'CHECK_CIRCLE_FILLED'" xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 0 12 12" width="12" focusable="false" aria-hidden="true" style="padding-left: 5px; pointer-events: none; display: inherit;"><path fill="#888" d="M6 0.5C2.962 0.5 0.5 2.962 0.5 6s2.462 5.5 5.5 5.5 5.5 -2.462 5.5 -5.5S9.037 0.5 6 0.5m2.853 3.647a0.5 0.5 0 0 1 0 0.707L5 8.707l-1.853 -1.853a0.5 0.5 0 1 1 0.707 -0.707L5 7.293l3.147 -3.147a0.5 0.5 0 0 1 0.707 0"/></svg></div>
               <span v-if="r.metadataRow2Part1 && r.metadataRow2Part1.replace(/\s+/g, '') !== '本日更新'">{{ r.metadataRow2Part1.replace(/\s+/g, '') === '再生リストの全体を見る' ? '再生リスト' : r.metadataRow2Part1.replace(/\s+/g, '') }}</span>
               <span v-if="r.metadataRow2Part2 && r.metadataRow2Part2.replace(/\s+/g, '')" class="dot">・</span>{{ r.metadataRow2Part2 ? r.metadataRow2Part2.replace(/\s+/g, '') : '' }}
             </div>
+            <span v-if="r.badge && r.badge !== null" class="badge-display">{{ r.badge }}</span>
           </div>
         </router-link>
       </li>
@@ -114,6 +115,13 @@ export default {
 }
 .badge-live { background: var(--danger); }
 
+.badge-display {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: block;
+}
+
 .video-info { flex: 1; }
 
 .video-title-related {
@@ -141,7 +149,7 @@ export default {
 }
 
 .re-actername{
-  margin-bottom: 3px;
+  margin-bottom: 0px;
   font-size: 0.8rem;
 }
 

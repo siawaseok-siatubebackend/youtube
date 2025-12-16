@@ -1,6 +1,6 @@
 <template>
   <section class="comments-section">
-    <h2 v-if="totalCommentCount !== null" style="color: var(--text-primary);">{{ totalCommentCount }}</h2>
+    <h2 v-if="totalCommentCount !== null" style="color: var(--text-primary); margin-block-start: 0px;">{{ totalCommentCount }}</h2>
 
     <!-- ローディング表示 -->
     <p v-if="loading" style="color: var(--text-primary);">コメントを読み込み中...</p>
@@ -179,7 +179,7 @@ export default {
 .comments-section {
   padding: 16px;
   border-radius: 8px;
-  margin-top: -20px;
+  margin-top: -10px;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;

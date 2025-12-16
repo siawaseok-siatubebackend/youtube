@@ -1,10 +1,15 @@
 <template>
-  <div class="video-description">
+  <div class="video-description" ref="descTop">
     <div v-if="!localShowFull" class="description-preview">
       <p v-if="descriptionRun0">{{ descriptionRun0 }}</p>
       <p v-if="descriptionRun1">{{ descriptionRun1 }}</p>
     </div>
-    <div v-else class="description-full" v-html="formattedDescription"></div>
+
+    <div
+      v-else
+      class="description-full"
+      v-html="formattedDescription"
+    ></div>
 
     <span
       class="description-toggle"
@@ -30,18 +35,31 @@ export default {
   },
   emits: ["toggle"],
   data() {
-    return { localShowFull: this.showFull };
+    return {
+      localShowFull: this.showFull,
+    };
   },
   watch: {
-    showFull(v) { this.localShowFull = v; }
+    showFull(v) {
+      this.localShowFull = v;
+    },
   },
   methods: {
     toggle() {
       this.localShowFull = !this.localShowFull;
       this.$emit("toggle", this.localShowFull);
+
       this.$nextTick(() => {
-        const el = this.$parent.$refs.videoTitle;
-        if (el?.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        // 「一部を表示」に戻したときだけ概要欄の先頭へスクロール
+        if (!this.localShowFull) {
+          const el = this.$refs.descTop;
+          if (el && typeof el.scrollIntoView === "function") {
+            el.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        }
       });
     },
   },
@@ -58,12 +76,17 @@ export default {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
 .description-preview {
   max-height: 120px;
   overflow: hidden;
   margin: 0 0 0.4em 0;
 }
-.description-full { margin: 0; }
+
+.description-full {
+  margin: 0;
+}
+
 .description-toggle {
   display: inline-block;
   color: var(--accent-color);
